@@ -4,7 +4,7 @@ if (select(2, UnitClass("player"))) ~= "ROGUE" then return end
 Name: Hemlock
 Revision: $Rev: 1.1.4 $
 Developed by: Antiarc
-Currently maintained by: Grome
+Currently maintained by: Grome, (2024) Broccoli / Pegga 
 Documentation:
 Github: https://github.com/taxidriveer/Hemlock
 Description: Minimalistic addon to automate poison buying and creation
