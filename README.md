@@ -26,6 +26,9 @@ How to use:
 ![image](https://github.com/user-attachments/assets/39e70a18-0d52-45f6-af54-7a21e1c25c0c)
 
 ![image](https://github.com/user-attachments/assets/299c0752-5de2-4205-909f-1ba6528223ec)
+![image](https://github.com/user-attachments/assets/972d8a2b-a150-409a-b0c5-fb0342ad80b5)
+![image](https://github.com/user-attachments/assets/2620c65f-0e92-4cc9-9c77-530cd5c4b6d1)
+
 
 /hemlock reset to show all poisons and reagents buttons or use the ingame addon option menu.
 
