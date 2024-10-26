@@ -257,7 +257,8 @@ end
 function GetRoot(self)
 	local parent = self:GetParent()
 	if parent and parent.GetRoot then
-		return parent:GetRoot()
+		local root = parent:GetRoot()
+		return root ~= 0 and root or self  -- Ensure it returns a valid object
 	else
 		return self
 	end
@@ -691,47 +692,60 @@ do
 		initInfo(type)
 	end
 
-	local function runHandler(button, handler, ...)
-		info.handler = handler
-		info.option = button.data
-		if not button.rootMenu then
-			tinsert(info, 1, button.dataname)
-		end
-		local v = button.data
-		if v and v[handler] then
-			local ht = type(v[handler])
-			if ht == "function" then
-				setInfoOptions()
-				local ret, r1, r2, r3 = v[handler](info, ...)
-				wipeInfo()
-				return ret, r1, r2, r3
-			elseif ht == "table" then
-				return v[handler]
-			elseif ht == "string" then
-				local t = runHandler(button, "handler", ...)
-				if type(t) == "table" then
-					setInfoOptions()
-					local ret, r1, r2, r3 = t[v[handler]](t, info, ...)
-					wipeInfo()
-					return ret, r1, r2, r3
-				end
-			end
-		elseif v and v[handler] == false then
-			return nil -- Is this right?
-		else
-			if button.GetParent then
-				local pp = button:GetParent() and button:GetParent():GetParent()
-				if not pp or not pp.data then
-					pp = button:GetParent()
-				end
-				if pp and pp.data then
-					return runHandler(pp, handler, ...)
-				end
-			end
-		end
+local function runHandler(button, handler, ...)
+	-- Check if button is nil before proceeding
+	if not button then
 		wipeInfo()
 		return nil
 	end
+
+	info.handler = handler
+	info.option = button.data
+
+	if not button.rootMenu then
+		tinsert(info, 1, button.dataname)
+	end
+
+	local v = button.data
+	if v then
+		local ht = type(v[handler])
+
+		if ht == "function" then
+			setInfoOptions()
+			local ret, r1, r2, r3 = v[handler](info, ...)
+			wipeInfo()
+			return ret, r1, r2, r3
+
+		elseif ht == "table" then
+			return v[handler]
+
+		elseif ht == "string" then
+			local t = runHandler(button, "handler", ...)
+			if type(t) == "table" then
+				setInfoOptions()
+				local ret, r1, r2, r3 = t[v[handler]](t, info, ...)
+				wipeInfo()
+				return ret, r1, r2, r3
+			end
+		elseif v[handler] == false then
+			return nil
+		end
+	end
+
+	-- Fall back to parent button if available
+	if button.GetParent then
+		local pp = button:GetParent() and button:GetParent():GetParent()
+		if not pp or not pp.data then
+			pp = button:GetParent()
+		end
+		if pp and pp.data then
+			return runHandler(pp, handler, ...)
+		end
+	end
+
+	wipeInfo()
+	return nil
+end
 
 	function grefresh(self)
 		local isDisabled = false
@@ -785,7 +799,7 @@ do
 		b.OnClick = function(self)
 			initInfo('execute')
 			runHandler(self, "func")
-			if self:IsShown() then
+			if self:IsShown() and self:GetRoot() then
 				self:GetRoot():Refresh()
 			end
 		end
@@ -979,8 +993,13 @@ do
 		local function sliderValueChanged(self, val)
 			initInfo('range')
 			runHandler(self:GetParent():GetParent(), "set", val)
-			self:GetParent():GetRoot():Refresh()
+			
+			local root = self.GetRoot and self:GetRoot()  -- Ensure GetRoot exists and returns a valid value
+			if root and root.Refresh then  -- Check if Refresh can be called on root
+				root:Refresh()
+			end
 		end
+
 
 		local function showSlider(frame)
 			local data = frame.data

@@ -88,7 +88,15 @@ function Hemlock:Register()
 			},
 			options = {
 				type = "execute",
-				func = function() InterfaceOptionsFrame_OpenToCategory(frame); InterfaceOptionsFrame_OpenToCategory(frame); end,
+				func = function() 
+					if Settings and Settings.OpenToCategory then
+				-- Use the new API function if available
+					Settings.OpenToCategory(frame)
+					else
+				-- Fallback for older clients or if the Settings API is not available
+					print("Unable to open options: function not supported in this version.")
+					end
+				end,
 				name = self:L("cmd_options"),
 				desc = self:L("cmd_options_desc"),
 			},
