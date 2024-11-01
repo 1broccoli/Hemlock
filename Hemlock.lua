@@ -47,7 +47,7 @@ Dependencies: Ace-3.0, LibDropdown-1.0
 local safeIDs = {6947, 5173, 3775, 217347, 217345, 217346, 226374}
 
 --[[ These should be the rank 1 poison IDs - ie, without a rank suffix! ]]--
-local poisonIDs = {6947, 2892, 3775, 10918, 5237, 217347, 217345, 217346}
+local poisonIDs = {6947, 2892, 3775, 10918, 5237, 217347, 217345, 217346, 226374}
 
 --[[ These are all the Wound Poison item IDs, used for alternative icon ]]--
 local woundPoisonIDs = {10918,10920,10921,10922}
@@ -396,7 +396,7 @@ function Hemlock:MakeFrame(itemID, space, lastFrame, frameType)
 	local AtrophicPoison = false
 	local SebaciousPoison = false
 	local NumbingPoison = false
-	local OccultPoisonI = false
+	local OccultPoison I = false
 	local alternativeIconApplied = false
 	local alternativeWoundPoisonIcon = Hemlock.db.profile.options.alternativeWoundPoisonIcon
 	local alternativeCripplingPoisonIcon = Hemlock.db.profile.options.alternativeCripplingPoisonIcon
@@ -518,7 +518,7 @@ function Hemlock:MakeFrame(itemID, space, lastFrame, frameType)
 					Hemlock:GetNeededPoisons(itemName, f)
 				else
 					CastSpellByName(Hemlock.poisonSpellName)
-					C_Timer.After(0.1, function() 
+					C_Timer.After(0.3, function() 
 						Hemlock:GetNeededPoisons(itemName, f) 
 					end)
 				end

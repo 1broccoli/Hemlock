@@ -1,6 +1,6 @@
 # Lib: Dropdown-1.0
 
-## [20240814](https://github.com/Addons-By-Neotron/LibDropDown/tree/20240814) (2024-08-14)
-[Full Changelog](https://github.com/Addons-By-Neotron/LibDropDown/compare/20240724...20240814) [Previous Releases](https://github.com/Addons-By-Neotron/LibDropDown/releases)
+## [2022-01-20.1](https://github.com/neotron/WoW-LibDropDown/tree/2022-01-20.1) (2022-01-20)
+[Full Changelog](https://github.com/neotron/WoW-LibDropDown/commits/2022-01-20.1) [Previous Releases](https://github.com/neotron/WoW-LibDropDown/releases)
 
-- Update Interface version  
+- Use v2 checkout.  

@@ -1,8 +1,8 @@
 ## Interface: 20000
-## Version: 2.0
+## Version: 2.1.2
 ## Title: Hemlock
 ## Notes: Minimalistic addon to automate poison buying and creation
-## Maintained by: (2024) Broccoli
+## Maintained by: (2024) Broccoli / Pegga
 ## Author: Antiarc, Grome  
 ## OptionalDeps: Ace3, LibDropdown-1.0, LibStub
 ## SavedVariables: HemlockDB

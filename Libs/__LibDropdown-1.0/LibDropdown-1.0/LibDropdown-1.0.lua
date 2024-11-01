@@ -1,5 +1,5 @@
 local MAJOR = "LibDropdown-1.0"
-local MINOR = 3
+local MINOR = 20240724
 
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
@@ -105,6 +105,9 @@ local function InitializeFrame(frame)
 		end
 	end
 	frame:SetScale(GameTooltip:GetScale())
+	if (frame:GetEffectiveScale() ~= GameTooltip:GetEffectiveScale()) then -- consider applied SetIgnoreParentScale() on GameTooltip regarding scaling of the frame
+		frame:SetScale(frame:GetScale() * GameTooltip:GetEffectiveScale() / frame:GetEffectiveScale())
+	end
 end
 
 local editBoxCount = 1
@@ -225,7 +228,6 @@ local function MouseOver(frame)
 	end
 	return false
 end
-
 -- Frame methods
 function AddButton(self, b)
 	b:ClearAllPoints()
@@ -255,7 +257,8 @@ end
 function GetRoot(self)
 	local parent = self:GetParent()
 	if parent and parent.GetRoot then
-		return parent:GetRoot()
+		local root = parent:GetRoot()
+		return root -- Ensure it returns a valid object
 	else
 		return self
 	end
@@ -388,7 +391,9 @@ do
 		if self.OnClick and self.clickable then
 			self.OnClick(self)
 			PlaySound(856)
-			self:GetParent():GetRoot():Refresh()
+			if self:IsShown() then
+				self:GetParent():GetRoot():Refresh()
+			end
 		end
 	end
 
@@ -688,49 +693,58 @@ do
 	end
 
 local function runHandler(button, handler, ...)
-    if not button then
-        return nil  -- Return early if button is nil to prevent errors
-    end
+	-- Check if button is nil before proceeding
+	if not button then
+		wipeInfo()
+		return nil
+	end
 
-    info.handler = handler
-    info.option = button.data
-    if not button.rootMenu then
-        tinsert(info, 1, button.dataname)
-    end
-    local v = button.data
-    if v and v[handler] then
-        local ht = type(v[handler])
-        if ht == "function" then
-            setInfoOptions()
-            local ret, r1, r2, r3 = v[handler](info, ...)
-            wipeInfo()
-            return ret, r1, r2, r3
-        elseif ht == "table" then
-            return v[handler]
-        elseif ht == "string" then
-            local t = runHandler(button, "handler", ...)
-            if type(t) == "table" then
-                setInfoOptions()
-                local ret, r1, r2, r3 = t[v[handler]](t, info, ...)
-                wipeInfo()
-                return ret, r1, r2, r3
-            end
-        end
-    elseif v and v[handler] == false then
-        return nil
-    else
-        if button.GetParent then
-            local pp = button:GetParent() and button:GetParent():GetParent()
-            if not pp or not pp.data then
-                pp = button:GetParent()
-            end
-            if pp and pp.data then
-                return runHandler(pp, handler, ...)
-            end
-        end
-    end
-    wipeInfo()
-    return nil
+	info.handler = handler
+	info.option = button.data
+
+	if not button.rootMenu then
+		tinsert(info, 1, button.dataname)
+	end
+
+	local v = button.data
+	if v then
+		local ht = type(v[handler])
+
+		if ht == "function" then
+			setInfoOptions()
+			local ret, r1, r2, r3 = v[handler](info, ...)
+			wipeInfo()
+			return ret, r1, r2, r3
+
+		elseif ht == "table" then
+			return v[handler]
+
+		elseif ht == "string" then
+			local t = runHandler(button, "handler", ...)
+			if type(t) == "table" then
+				setInfoOptions()
+				local ret, r1, r2, r3 = t[v[handler]](t, info, ...)
+				wipeInfo()
+				return ret, r1, r2, r3
+			end
+		elseif v[handler] == false then
+			return nil
+		end
+	end
+
+	-- Fall back to parent button if available
+	if button.GetParent then
+		local pp = button:GetParent() and button:GetParent():GetParent()
+		if not pp or not pp.data then
+			pp = button:GetParent()
+		end
+		if pp and pp.data then
+			return runHandler(pp, handler, ...)
+		end
+	end
+
+	wipeInfo()
+	return nil
 end
 
 	function grefresh(self)
@@ -785,7 +799,9 @@ end
 		b.OnClick = function(self)
 			initInfo('execute')
 			runHandler(self, "func")
-			self:GetRoot():Refresh()
+			if self:IsShown() and self:GetRoot() then
+				self:GetRoot():Refresh()
+			end
 		end
 	end
 
@@ -799,7 +815,9 @@ end
 		local function inputValueChanged(self, val)
 			initInfo('input')
 			runHandler(self:GetParent():GetParent(), "set", val)
-			self:GetParent():GetRoot():Refresh()
+			if self:IsShown() then
+				self:GetParent():GetRoot():Refresh()
+			end
 		end
 
 		function Ace3.input(k, v, parent)
@@ -855,7 +873,10 @@ end
 				local val = not runHandler(self, "get")
 				runHandler(self, "set", val)
 			end
-			self:GetRoot():Refresh()
+
+			if self:IsShown() then
+				self:GetRoot():Refresh()
+			end
 		end
 
 		function Ace3.toggle(k, v, parent)
@@ -972,13 +993,13 @@ end
 		local function sliderValueChanged(self, val)
 			initInfo('range')
 			runHandler(self:GetParent():GetParent(), "set", val)
-			local root = self:GetParent().GetRoot and self:GetParent():GetRoot()
-				if root and root.Refresh then
+			
+			local root = self.GetRoot and self:GetRoot()  -- Ensure GetRoot exists and returns a valid value
+			if root and root.Refresh then  -- Check if Refresh can be called on root
 				root:Refresh()
-			else
-		        print("Warning: GetRoot or Refresh method is missing in sliderValueChanged.")
 			end
 		end
+
 
 		local function showSlider(frame)
 			local data = frame.data
@@ -1202,9 +1223,24 @@ local t = {
 --[[function testlibdropdown()
 	LibStub("LibDropdown-1.0"):OpenAce3Menu(t)
 end]]
+if UIDropDownMenu_HandleGlobalMouseEvent then
+	hooksecurefunc("UIDropDownMenu_HandleGlobalMouseEvent", function(button, event)
+		if openMenu and event == "GLOBAL_MOUSE_DOWN" and (button == "LeftButton" or button == "RightButton") then
+			for i = 0, frameCount - 1 do
+				if _G["LibDropdownFrame" .. i]:IsMouseOver() then return end
+			end
 
-WorldFrame:HookScript("OnMouseDown", function()
-	if openMenu then
-		openMenu = openMenu:Release()
-	end
-end)
+			openMenu:Release()
+		end
+	end)
+else
+	lib.mousecallback = EventRegistry:RegisterFrameEventAndCallback("GLOBAL_MOUSE_DOWN",function(ownerID,button)
+		if openMenu and (button == "LeftButton" or button == "RightButton") then
+			for i = 0, frameCount - 1 do
+				if _G["LibDropdownFrame" .. i]:IsMouseOver() then return end
+			end
+
+			openMenu:Release()
+		end
+	end)
+end
