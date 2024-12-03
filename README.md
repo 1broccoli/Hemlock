@@ -1,7 +1,8 @@
 # Hemlock
 World of Warcraft updated code for hemlock (poison helper) update for for seasons of discover.
 Developed by: Antiarc
-Currently maintained by: Grome, (2024) Broccoli / Pegga 
+Currently maintained by: (2024) Broccoli / Pegga 
+Contributor: Zautix
 
 Classic Update
 
