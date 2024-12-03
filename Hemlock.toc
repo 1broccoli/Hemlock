@@ -2,8 +2,8 @@
 ## Version: 2.1.2
 ## Title: Hemlock
 ## Notes: Minimalistic addon to automate poison buying and creation
+## Author: Antiarc
 ## Maintained by: (2024) Broccoli / Pegga
-## Author: Antiarc, Grome  
 ## OptionalDeps: Ace3, LibDropdown-1.0, LibStub
 ## SavedVariables: HemlockDB
 ## Website: https://www.curseforge.com/members/pegga/projects 

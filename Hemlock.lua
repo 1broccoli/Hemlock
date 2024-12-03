@@ -5,6 +5,8 @@ Name: Hemlock
 Revision: $Rev: 1.1.4 $
 Developed by: Antiarc
 Currently maintained by: Grome, (2024) Broccoli / Pegga 
+Contributer: Zinterax
+ 
 Documentation:
 Github: https://github.com/taxidriveer/Hemlock
 Description: Minimalistic addon to automate poison buying and creation
@@ -69,7 +71,16 @@ local defaults = {
 		options = {}
 	}
 }
-
+local backdropInfo =
+{
+	bgFile = "Interface\\Garrison\\ClassHallBackground",
+ 	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+ 	tile = true,
+ 	tileEdge = true,
+ 	tileSize = 256,
+ 	edgeSize = 16,
+ 	insets = { left = 2.5, right = 2.5, top = 2.5, bottom = 2.5 },
+}
 function Hemlock:Register()
 	local options = {
 		type='group',
