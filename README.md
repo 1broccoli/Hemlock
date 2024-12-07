@@ -4,6 +4,9 @@ Developed by: Antiarc
 Currently maintained by: (2024) Broccoli / Pegga 
 Contributor: Zautix
 
+**QUICK SOD AQ FIX**
+![hlfix](https://github.com/user-attachments/assets/d4d34463-e469-48e0-ac98-6bb1c894edda)
+
 Classic Update
 
     Migrated to Ace3 / LibDropDown
