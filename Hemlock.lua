@@ -1,44 +1,39 @@
 if (select(2, UnitClass("player"))) ~= "ROGUE" then return end
 
 --[[
-Name: Hemlock
-Revision: $Rev: 1.1.4 $
-Developed by: Antiarc
-Currently maintained by: Grome, (2024) Broccoli / Pegga 
-Contributer: Zinterax
- 
-Documentation:
-Github: https://github.com/taxidriveer/Hemlock
-Description: Minimalistic addon to automate poison buying and creation
-Dependencies: Ace-3.0, LibDropdown-1.0
-]]--
-
---[[*** Configuration ***]]--
-
---[[
 	-- Item IDs - using these precludes the need to hardcode icon paths or localize item names.
-	Crippling: 3775
-	Instant: 6947
-	Wound: 10918
-	Mind-numbing: 5237
-	Anesthetic: 21835
-	Deadly: 2892
+	Crippling
+	ItemID  3775
+	
+	Instant
+	ItemID  6947
+	
+	Wound 
+	ItemID  10918
+	
+	Mind-numbing
+	ItemID  5237
+	
+	Anesthetic
+	ItemID  21835
+	
+	Deadly
+	ItemID  2892
 	
 	Atrophic Poison
-	spell ID 217347  
 	ItemID  217347
 
 	Sebacious Poison 
-	spell ID 217345 
 	ItemID 217345
 
 	Numbing Poison 
-	Spell ID 217346
 	ItemID 217346
  
 	Occult Poison I 
-	Spell ID 226374 
 	ItemID 226374
+	
+	Occult Poison II 
+	ItemID 234444 
 
 	-- I need the Deathweed to check if it's a poison vendor. Yay for locale-agnostic code!
 	Deathweed: 5173
@@ -46,13 +41,14 @@ Dependencies: Ace-3.0, LibDropdown-1.0
 	These are the IDs of items that Hemlock should check to decide if we have an empty cache or not.
 	It's not foolproof, but it should help a bit.
 ]]--
-local safeIDs = {6947, 5173, 3775, 217347, 217345, 217346, 226374}
+local safeIDs = {6947, 5173, 3775, 217347, 217345, 217346, 226374, 234444}
 
 --[[ These should be the rank 1 poison IDs - ie, without a rank suffix! ]]--
-local poisonIDs = {6947, 2892, 3775, 10918, 5237, 217347, 217345, 217346, 226374}
+local poisonIDs = {6947, 2892, 3775, 10918, 5237, 217347, 217345, 217346, 226374, 234444}
+
 
 --[[ These are all the Wound Poison item IDs, used for alternative icon ]]--
-local woundPoisonIDs = {10918,10920,10921,10922}
+local woundPoisonIDs = {10918, 10920, 10921, 10922}
 local cripplingPoisonIDs = {3775,3776}
 
 --[[ Flash powder. Don't need anything else right now. ]]--
@@ -71,16 +67,7 @@ local defaults = {
 		options = {}
 	}
 }
-local backdropInfo =
-{
-	bgFile = "Interface\\Garrison\\ClassHallBackground",
- 	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
- 	tile = true,
- 	tileEdge = true,
- 	tileSize = 256,
- 	edgeSize = 16,
- 	insets = { left = 2.5, right = 2.5, top = 2.5, bottom = 2.5 },
-}
+
 function Hemlock:Register()
 	local options = {
 		type='group',
@@ -407,7 +394,7 @@ function Hemlock:MakeFrame(itemID, space, lastFrame, frameType)
 	local AtrophicPoison = false
 	local SebaciousPoison = false
 	local NumbingPoison = false
-	local OccultPoison I = false
+	local OccultPoisonI = false
 	local alternativeIconApplied = false
 	local alternativeWoundPoisonIcon = Hemlock.db.profile.options.alternativeWoundPoisonIcon
 	local alternativeCripplingPoisonIcon = Hemlock.db.profile.options.alternativeCripplingPoisonIcon
@@ -526,11 +513,15 @@ function Hemlock:MakeFrame(itemID, space, lastFrame, frameType)
 		f:SetScript("OnClick", function(self, button)
 			if (button == "LeftButton") then
 				if TradeSkillFrame and TradeSkillFrame:IsVisible() then
+				
+					TradeSkillFrame:Hide()
+					-- Call the function to craft poisons
 					Hemlock:GetNeededPoisons(itemName, f)
-				else
+				else	
 					CastSpellByName(Hemlock.poisonSpellName)
-					C_Timer.After(0.3, function() 
+					C_Timer.After(0.1, function() 
 						Hemlock:GetNeededPoisons(itemName, f) 
+					
 					end)
 				end
 			end
@@ -608,6 +599,7 @@ function Hemlock:MakeFrame(itemID, space, lastFrame, frameType)
 		f:SetScript("OnClick", function(self, button)
 			if (button == "LeftButton") then
 				local toBuy = Hemlock.db.profile.reagentRequirements[itemName] - GetItemCount(itemName)
+				
 				if toBuy > 0 then
 					f:Disable()
 					f:GetNormalTexture():SetDesaturated(true)
@@ -635,22 +627,30 @@ function Hemlock:MakeFrame(itemID, space, lastFrame, frameType)
 end
 
 function Hemlock:InitFrames()
-	local lastFrame = nil
-	local space = -3
-	self.frameIndex = 0
-	for k,v in pairs(poisonIDs) do
-		local lf = Hemlock:MakeFrame(v, space, lastFrame, 1)
-		if lf then lastFrame = lf end
-	end
-	for k,v in pairs(reagentIDs) do
-		local lf = Hemlock:MakeFrame(v, space, lastFrame, 2)
-		if lf then lastFrame = lf end
-	end
-	if lastFrame then
-		HemlockFrame:SetHeight((lastFrame:GetHeight() + math.abs(space)) * self.frameIndex + math.abs(space))
-	else
-		Hemlock:Reset()
-	end
+    local lastFrame = nil
+    local space = -3
+    self.frameIndex = 0
+    
+    -- Loop over all poisons in the poisonIDs table (including the new Occult Poisons)
+    for k, v in pairs(poisonIDs) do
+        -- Make a frame for each poison ID
+        local lf = Hemlock:MakeFrame(v, space, lastFrame, 1)
+        if lf then lastFrame = lf end
+    end
+
+    -- Loop over all reagents in the reagentIDs table (unchanged)
+    for k, v in pairs(reagentIDs) do
+        -- Make a frame for each reagent ID
+        local lf = Hemlock:MakeFrame(v, space, lastFrame, 2)
+        if lf then lastFrame = lf end
+    end
+
+    -- Adjust frame height based on the number of poisons and reagents
+    if lastFrame then
+        HemlockFrame:SetHeight((lastFrame:GetHeight() + math.abs(space)) * self.frameIndex + math.abs(space))
+    else
+        Hemlock:Reset() -- Reset if no frames were created
+    end
 end
 
 function Hemlock:OnEnable()
@@ -1112,6 +1112,7 @@ function Hemlock:ScanPoisons(step)
 		for i=1,3 do
 			CastSpellByName(self.poisonSpellName)
 			if TradeSkillFrame and TradeSkillFrame:IsVisible() then
+				
 				break
 			end
 		end
