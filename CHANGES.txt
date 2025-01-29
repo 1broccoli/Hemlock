@@ -1,0 +1,62 @@
+Changes since tag Wow
+
+commit 5ccdd6ff383a0a765f36219f2f4e4bf21eeb532c
+Author: Broccoli <138363916+1broccoli@users.noreply.github.com>
+Date:   Wed Jan 15 15:57:35 2025 -0700
+
+    Delete junk.txt
+
+commit fba1c8905191d6e573381c89167c886582b71e48
+Author: Broccoli <138363916+1broccoli@users.noreply.github.com>
+Date:   Wed Jan 15 15:27:11 2025 -0700
+
+    Add files via upload
+    
+    test webhook
+
+commit d6be5df930ee6943f678fd7ac6bd8cce7cf1cdfd
+Author: Broccoli <138363916+1broccoli@users.noreply.github.com>
+Date:   Fri Dec 6 22:01:37 2024 -0700
+
+    Update README.md
+
+commit 02427092b66275823e27aa74b6c4e58dbf979d48
+Author: Broccoli <138363916+1broccoli@users.noreply.github.com>
+Date:   Fri Dec 6 22:01:16 2024 -0700
+
+    Update README.md
+
+commit bbfcd2c5c2dd7183e37a0c3f921adb58e87911c8
+Author: Broccoli <138363916+1broccoli@users.noreply.github.com>
+Date:   Fri Dec 6 22:00:25 2024 -0700
+
+    Add files via upload
+    
+    AQ SOD -- added a quick fix for Occult Poison II (exclude Occult Poison I otherwise)
+    
+    Poison crafting window now closes when you craft a poison.
+    
+    The way the original code was written it has to be visible and open to retrieve material information & craft.
+    
+    Working on version 3.0 with quality of improvements in interface addons page instead of only slash commands.
+
+commit 09cfbbeb3bcdbeeef289b411ece7322fc053b047
+Author: Broccoli <138363916+1broccoli@users.noreply.github.com>
+Date:   Tue Dec 3 16:57:05 2024 -0700
+
+    Update README.md
+
+commit 91199362d0c03120882a86410494a135060b08a5
+Author: Broccoli <138363916+1broccoli@users.noreply.github.com>
+Date:   Tue Dec 3 15:52:41 2024 -0700
+
+    Add files via upload
+    
+    ## Contributor: Zautix
+
+commit 37cc7a2db4a25048d32eb7f9e7804383f43bae42
+Author: Broccoli <138363916+1broccoli@users.noreply.github.com>
+Date:   Tue Dec 3 15:51:16 2024 -0700
+
+    Add files via upload
+

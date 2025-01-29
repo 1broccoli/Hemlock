@@ -1,5 +1,24 @@
 if (select(2, UnitClass("player"))) ~= "ROGUE" then return end
 
+-- Define the Hemlock variable
+Hemlock = LibStub("AceAddon-3.0"):NewAddon("Hemlock", "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0")
+
+-- Define the localization function
+function Hemlock:L(str, ...)
+	local s = nil
+	if HemlockLocalization[GetLocale()] and HemlockLocalization[GetLocale()][str] then
+		s = HemlockLocalization[GetLocale()][str]
+	elseif HemlockLocalization["enUS"] and HemlockLocalization["enUS"][str] then
+		s = HemlockLocalization["enUS"][str]
+	else
+		s = "INVALID LOCALIZATION KEY: " .. str
+	end
+	for k,v in pairs({...}) do
+		s = gsub(s, "$S", v, 1)
+	end
+	return s
+end
+
 --[[
 	-- Item IDs - using these precludes the need to hardcode icon paths or localize item names.
 	Crippling
@@ -55,8 +74,6 @@ local cripplingPoisonIDs = {3775,3776}
 local reagentIDs = {5140}
 
 --[[*** End Configuration ***]]--
-
-Hemlock = LibStub("AceAddon-3.0"):NewAddon("Hemlock", "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0")
 
 local defaults = {
 	profile = {
@@ -274,7 +291,7 @@ function Hemlock:Register()
 					max = 100,
 					step = 5,
 					isPercent = false,
-					desc = self:L("specify_make", k),
+					order = 200,
 					get = function()
 						return self.db.profile.reagentRequirements[k]
 					end,
@@ -1034,79 +1051,73 @@ function Hemlock:BuyVendorItem(pName, count, countTo)
 end
 
 function Hemlock:GetNeededPoisons(name, frame)
-	local v = name
-	local amt = self.db.profile.poisonRequirements[name]
-	local poison, skillIndex = self:GetMaxPoisonRank(v)
-	local buyConfirmation = Hemlock.db.profile.options.buyConfirmation
-	local popupText = ""
-	for k,v in pairs(self.buyTable.ConfirmationPopup) do self.buyTable.ConfirmationPopup[k] = nil end
-	self.noMessage = false
-	if not self.claimedReagents[skillIndex] then self.claimedReagents[skillIndex] = {} end
-	if poison then
-		-- local count = GetItemCount(GetTradeSkillItemLink(skillIndex))
-		local count = Hemlock:GetPoisonsInInventory(name)
-		local toMake = math.ceil((amt - count) / GetTradeSkillNumMade(skillIndex))
-		if toMake > 0 then
-			for i = 1, GetTradeSkillNumReagents(skillIndex) do
-				local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(skillIndex, i)
-				local toBuy = (reagentCount * toMake)
-				local need = toBuy
-				for k,v in pairs(self.claimedReagents) do
-					if v[reagentName] and k ~= skillIndex and playerReagentCount < 0 then
-						playerReagentCount = playerReagentCount - v[reagentName]
-					end
-				end
-				toBuy = toBuy - playerReagentCount
-				if toBuy > 0 then
-					self.buyTable.ConfirmationPopup[reagentName] = toBuy
-					self.noMessage = true
-				else
-					self.claimedReagents[skillIndex][reagentName] = need
-				end
-			end
-			if not self.noMessage then
-				for i = 1, GetTradeSkillNumReagents(skillIndex) do
-					local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(skillIndex, i)
-				end
-				DoTradeSkill(skillIndex, toMake)
-				self.claimedReagents[skillIndex] = nil
-				return
-			end
-		else
-			Hemlock:PrintMessage(self:L("skipping", name, amt, count))
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-		end
-	end
-	for rName, rToBuy in pairs(self.buyTable.ConfirmationPopup) do
-		if rName and type(rToBuy) ~= "table" then
-			popupText = popupText .. "\n" .. rName .. "|cffffd200 x " .. rToBuy .. "|r"
-		end
-	end
-	if popupText ~= "" then
-		if buyConfirmation then
-			Hemlock:ConfirmationPopup(popupText,frame,name)
-		else
-			Hemlock:ConfirmationPopupAccepted(frame,name)
-		end
-	end
+    local v = name
+    local amt = self.db.profile.poisonRequirements[name]
+    local poison, skillIndex = self:GetMaxPoisonRank(v)
+    local buyConfirmation = Hemlock.db.profile.options.buyConfirmation
+    local popupText = ""
+    for k,v in pairs(self.buyTable.ConfirmationPopup) do self.buyTable.ConfirmationPopup[k] = nil end
+    self.noMessage = false
+    if not self.claimedReagents[skillIndex] then self.claimedReagents[skillIndex] = {} end
+    if poison then
+        local count = Hemlock:GetPoisonsInInventory(name)
+        local toMake = math.ceil((amt - count) / GetTradeSkillNumMade(skillIndex))
+        if toMake > 0 then
+            for i = 1, GetTradeSkillNumReagents(skillIndex) do
+                local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(skillIndex, i)
+                local toBuy = (reagentCount * toMake)
+                local need = toBuy
+                for k,v in pairs(self.claimedReagents) do
+                    if v[reagentName] and k ~= skillIndex and playerReagentCount < 0 then
+                        playerReagentCount = playerReagentCount - v[reagentName]
+                    end
+                end
+                toBuy = toBuy - playerReagentCount
+                if toBuy > 0 then
+                    self.buyTable.ConfirmationPopup[reagentName] = toBuy
+                    self.noMessage = true
+                else
+                    self.claimedReagents[skillIndex][reagentName] = need
+                end
+            end
+            if not self.noMessage then
+                for i = 1, GetTradeSkillNumReagents(skillIndex) do
+                    local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(skillIndex, i)
+                end
+                -- Securely call DoTradeSkill
+                if InCombatLockdown() then
+                    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+                    self.PLAYER_REGEN_ENABLED = function()
+                        C_Timer.After(0.1, function()
+                            DoTradeSkill(skillIndex, toMake)
+                        end)
+                        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+                    end
+                else
+                    DoTradeSkill(skillIndex, toMake)
+                end
+                self.claimedReagents[skillIndex] = nil
+                return
+            end
+        else
+            Hemlock:PrintMessage(self:L("skipping", name, amt, count))
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+        end
+    end
+    for rName, rToBuy in pairs(self.buyTable.ConfirmationPopup) do
+        if rName and type(rToBuy) ~= "table" then
+            popupText = popupText .. "\n" .. rName .. "|cffffd200 x " .. rToBuy .. "|r"
+        end
+    end
+    if popupText ~= "" then
+        if buyConfirmation then
+            Hemlock:ConfirmationPopup(popupText, frame, name)
+        else
+            Hemlock:ConfirmationPopupAccepted(frame, name)
+        end
+    end
 end
 
-function Hemlock:L(str, ...)
-	local s = nil
-	if HemlockLocalization[GetLocale()] and HemlockLocalization[GetLocale()][str] then
-		s = HemlockLocalization[GetLocale()][str]
-	elseif HemlockLocalization["enUS"] and HemlockLocalization["enUS"][str] then
-		s = HemlockLocalization["enUS"][str]
-	else
-		s = "INVALID LOCALIZATION KEY: " .. str
-	end
-	for k,v in pairs({...}) do
-		s = gsub(s, "$S", v, 1)
-	end
-	return s
-end
-
--- This really doesn't work very well.
 function Hemlock:ScanPoisons(step)
 	if step == 1 then
 		for i=1,3 do

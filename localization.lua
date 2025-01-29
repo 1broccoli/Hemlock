@@ -1,4 +1,4 @@
-﻿-- To do a new localization, copy the "enUS" block and change the values on the right-hand side. In the new block, change "enUS" to your new localization.
+-- To do a new localization, copy the "enUS" block and change the values on the right-hand side. In the new block, change "enUS" to your new localization.
 HemlockLocalization = {
 	["enUS"] = {
 		["specify_make"]		= "Specify the number of $S that you wish Hemlock to refill your inventory to.",
