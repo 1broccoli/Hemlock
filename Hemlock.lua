@@ -1,3 +1,6 @@
+--- WIP Minimap button soon --- 
+
+
 if (select(2, UnitClass("player"))) ~= "ROGUE" then return end
 
 -- Define the Hemlock variable
@@ -1089,11 +1092,13 @@ function Hemlock:GetNeededPoisons(name, frame)
                     self:RegisterEvent("PLAYER_REGEN_ENABLED")
                     self.PLAYER_REGEN_ENABLED = function()
                         C_Timer.After(0.1, function()
+                            CastSpellByName(poison)
                             DoTradeSkill(skillIndex, toMake)
                         end)
                         self:UnregisterEvent("PLAYER_REGEN_ENABLED")
                     end
                 else
+                    CastSpellByName(poison)
                     DoTradeSkill(skillIndex, toMake)
                 end
                 self.claimedReagents[skillIndex] = nil
@@ -1117,7 +1122,6 @@ function Hemlock:GetNeededPoisons(name, frame)
         end
     end
 end
-
 function Hemlock:ScanPoisons(step)
 	if step == 1 then
 		for i=1,3 do

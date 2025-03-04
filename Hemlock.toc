@@ -1,9 +1,9 @@
 ## Interface: 20000
-## Version: 2.3
-## Title: Hemlock
+## Version: 2.4
+## Title: |cff00ff00Hemlock Reloaded|r
 ## Notes: Minimalistic addon to automate poison buying and creation
 ## Developed by: Antiarc
-## Author: Pegga / Broccoli 
+## Author: |cffffd700Pegga / Broccoli|r
 ## Contributor: Zautix, gome?  
 ## OptionalDeps: Ace3, LibDropdown-1.0, LibStub
 ## SavedVariables: HemlockDB
