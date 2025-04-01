@@ -1,3 +1,4 @@
+works for anni version of wow
 lightweight tag 10f70224a0f87131e37667ec71bb6b728cd5232d hemlock
 Author:	GitHub <noreply@github.com>
 Date:	Tue Jan 28 17:22:25 2025 -0700
