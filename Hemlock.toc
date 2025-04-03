@@ -1,5 +1,5 @@
 ## Interface: 20000
-## Version: 2.4
+## Version: 2.4.1
 ## Title: |cff00ff00Hemlock Reloaded|r
 ## Notes: Minimalistic addon to automate poison buying and creation
 ## Developed by: Antiarc
