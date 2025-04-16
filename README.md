@@ -4,7 +4,7 @@ Classic Update
 * Support for Classic
 * Added confirmation dialog
 * Alternative icons support
-
+ 
 Hemlock - Minimalistic addon to automate poison buying and creation
 ---------------------------------------
 This is a Classic fan update version of the addon Hemlock : https://www.wowace.com/projects/project-14170.
