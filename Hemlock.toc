@@ -1,4 +1,4 @@
-## Interface: 20000
+## Interface: 11508
 ## Version: 2.5
 ## Title: |cff00ff00Hemlock Reloaded|r
 ## Notes: automate poison buying and creation

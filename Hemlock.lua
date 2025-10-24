@@ -755,15 +755,11 @@ function Hemlock:ConfirmationPopup(popupText,frame,pName)
 	end	
 	-- Popup dialog
 	StaticPopupDialogs["HEMLOCK_CONFIRMATION"] = {
-		text = "|cff55ff55Hemlock|r\n" .. popupText,
+		text = "|cff55ff55Hemlock|r\n" .. popupText .. "\n\n" .. GetCoinTextureString(totalReagentPrice),
 		button1 = self:L("popup_buy"),
 		button2 = self:L("popup_cancel"),
-		hasMoneyFrame = 1,
 		OnAccept = function()
 			Hemlock:ConfirmationPopupAccepted(frame,pName)
-		end,
-		OnShow = function(self)
-			MoneyFrame_Update(self.moneyFrame, totalReagentPrice);
 		end,
 		timeout = 0,
 		whileDead = true,
