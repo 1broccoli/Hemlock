@@ -73,6 +73,17 @@ local cripplingPoisonIDs = {3775,3776}
 --[[ Flash powder. Don't need anything else right now. ]]--
 local reagentIDs = {5140}
 
+local backdropInfo =
+{
+	bgFile = "Interface\\Garrison\\ClassHallBackground",
+	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+	tile = true,
+	tileEdge = true,
+	tileSize = 256,
+	edgeSize = 16,
+	insets = { left = 2.5, right = 2.5, top = 2.5, bottom = 2.5 },
+}
+
 --[[*** End Configuration ***]]--
 
 local defaults = {
@@ -762,8 +773,8 @@ function Hemlock:ConfirmationPopup(popupText,frame,pName)
 		OnAccept = function()
 			Hemlock:ConfirmationPopupAccepted(frame,pName)
 		end,
-		OnShow = function(self)
-			MoneyFrame_Update(self.moneyFrame, totalReagentPrice);
+		OnShow = function(self, data)
+			MoneyFrame_Update(self:GetName().."MoneyFrame", totalReagentPrice);
 		end,
 		timeout = 0,
 		whileDead = true,
