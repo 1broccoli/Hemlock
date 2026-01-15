@@ -9,3 +9,4 @@
 ### Bug Fixes
 - Fixed "attempt to index local 'frame' (a nil value)" error in MoneyFrame_Update call
 - Corrected MoneyFrame reference in StaticPopup OnShow handler to use proper frame naming convention
+
