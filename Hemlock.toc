@@ -1,11 +1,10 @@
-## Interface: 20000
-## Version: 2.6
+## Interface: 20505
+## Version: 2.6.2
 ## Title: |cff00ff00Hemlock Reloaded|r
-## Notes: automate poison buying and creation
-## IconTexture: Interface\AddOns\Hemlock\Media\Textures\icon.blp
+## Notes: Minimalistic addon to automate poison buying and creation
 ## Developed by: Antiarc
 ## Author: |cffffd700Pegga / Broccoli|r
-## Contributor: Zautix, gome?  
+## Contributor: milestorme (TBC Update), Zautix, gome?  
 ## OptionalDeps: Ace3, LibDropdown-1.0, LibStub
 ## SavedVariables: HemlockDB
 ## Website: https://www.curseforge.com/members/pegga/

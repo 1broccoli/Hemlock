@@ -1,11 +1,15 @@
-## Version 2.6
 
-### Changes
-- Added backdrop styling to the Hemlock frame with ClassHallBackground texture and tooltip border
-- Updated frame positioning to anchor relative to MerchantFrameCloseButton for improved layout
-- Fixed MoneyFrame reference error in confirmation popup that was causing nil value crashes
-- Updated frame XML to use BackdropTemplate for proper backdrop rendering
 
 ### Bug Fixes
+16 Jan 2026
 - Fixed "attempt to index local 'frame' (a nil value)" error in MoneyFrame_Update call
 - Corrected MoneyFrame reference in StaticPopup OnShow handler to use proper frame naming convention
+- Updated version to 2.6.2
+- Thank you milestorme
+
+15 Jan 20206
+- Fixed "attempt to index local 'frame' (a nil value)" error in MoneyFrame_Update call
+- Corrected MoneyFrame reference in StaticPopup OnShow handler to use proper frame naming convention
+- Corrected MoneyFrame reference in StaticPopup OnShow handler to use proper frame naming convention
+
+- Thank you milestorme
