@@ -798,7 +798,6 @@ function Hemlock:ConfirmationPopup(popupText,frame,pName)
 		text = "|cff55ff55Hemlock|r\n" .. popupText .. "\n\n" .. GetCoinTextureString(totalReagentPrice),
 		button1 = self:L("popup_buy"),
 		button2 = self:L("popup_cancel"),
-		hasMoneyFrame = 1,
 		OnAccept = function()
 			Hemlock:ConfirmationPopupAccepted(frame,pName)
 		end,
@@ -1122,20 +1121,22 @@ function Hemlock:GetNeededPoisons(name, frame)
                 for i = 1, GetTradeSkillNumReagents(skillIndex) do
                     local reagentName, reagentTexture, reagentCount, playerReagentCount = GetTradeSkillReagentInfo(skillIndex, i)
                 end
-                -- Securely call DoTradeSkill
-                if InCombatLockdown() then
-                    self:RegisterEvent("PLAYER_REGEN_ENABLED")
-                    self.PLAYER_REGEN_ENABLED = function()
-                        C_Timer.After(0.1, function()
-                            CastSpellByName(poison)
-                            DoTradeSkill(skillIndex, toMake)
-                        end)
-                        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-                    end
-                else
-                    CastSpellByName(poison)
-                    DoTradeSkill(skillIndex, toMake)
-                end
+				-- NOTE (TBC Anniversary / Classic): DoTradeSkill() is protected and cannot be called by addons,
+				-- even out of combat, which triggers ADDON_ACTION_BLOCKED.
+				-- Instead, open/select the poison recipe and let the player press "Create" manually.
+				-- (We keep DoTradeSkill() in the addon for older clients, but we do not invoke it here.)
+				CastSpellByName(Hemlock.poisonSpellName) -- open Poisons tradeskill if not already open
+				C_Timer.After(0.15, function()
+					if TradeSkillFrame_SetSelection then
+						TradeSkillFrame_SetSelection(skillIndex)
+					elseif SelectTradeSkill then
+						SelectTradeSkill(skillIndex)
+					end
+					if TradeSkillInputBox and TradeSkillInputBox.SetNumber then
+						TradeSkillInputBox:SetNumber(toMake)
+					end
+				end)
+				Hemlock:PrintMessage("All reagents are ready for " .. tostring(poison) .. ". Click Create to craft x" .. tostring(toMake) .. ".")
                 self.claimedReagents[skillIndex] = nil
                 return
             end
